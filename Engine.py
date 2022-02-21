@@ -18,7 +18,7 @@ class Engine:
                 s.planes.append(Plane(pos, norm))
 
         # Create balls
-        s.balls = [Ball(np.random.rand(3,), np.random.rand(3,)) for i in range(int(5e3))]
+        s.balls = [Ball(np.random.rand(3,), np.random.rand(3,) * 2 - 1) for i in range(int(5e3))]
 
     def run(s, time, dtime):
         t = 0
