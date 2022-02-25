@@ -1,10 +1,10 @@
 import numpy as np
 
 class Ball:
-    def __init__(s, pos, velocity):
+    def __init__(s, radius, pos, velocity):
+        s.radius = radius
         s.pos = pos
         s.velocity = velocity
-        s.radius = 1e-2 # XXX
 
     def collides(s, plane):
         return plane.dist(s.pos) <= s.radius
