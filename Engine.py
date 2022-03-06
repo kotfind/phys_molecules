@@ -15,6 +15,7 @@ class Engine:
         s.balls_quantity = int(5e3)
         s.plot_coords = 0
         s.plot_momentums = 1
+        s.plot_speeds = 1
 
         # Create planes
         s.planes = []
@@ -51,6 +52,15 @@ class Engine:
 
         if s.plot_momentums:
             plot2d(s.momentums)
+
+        if s.plot_speeds:
+            s.speeds = [0] * 1000
+            for ball in s.balls:
+                s.speeds[int(ball.velocity[0] / s.max_ball_speed * 1000)] += 1;
+            toplot = [[]]
+            for i in range(1000):
+                toplot[0].append((i / 1000 * s.max_ball_speed, s.speeds[i]))
+            plot2d(toplot)
 
     def process_collsions(s, t):
         for i in range(len(s.planes)):
