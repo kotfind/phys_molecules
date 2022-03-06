@@ -6,9 +6,6 @@ class Ball:
         s.pos = pos
         s.velocity = velocity
 
-    def collides(s, plane):
-        return plane.dist(s.pos) <= s.radius
-
     def reflect(s, norm):
         s.velocity = s.velocity - 2 * np.dot(s.velocity, norm) * norm
 

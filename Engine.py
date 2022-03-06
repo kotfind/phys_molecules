@@ -9,10 +9,10 @@ from Random import rand_vec
 class Engine:
     def __init__(s):
         # Options
-        s.max_time = 1
+        s.max_time = 3
         s.delta_time = 1e-2
-        s.max_ball_speed = 1e2;
-        s.ball_radius = 1e-2;
+        s.max_ball_speed = 1;
+        s.ball_radius = 1e-10;
         s.balls_quantity = int(5e3)
         s.plot_coords = 0
         s.plot_momentums = 1
@@ -43,9 +43,9 @@ class Engine:
             s.process_collsions(t)
             for i in range(len(s.balls)):
                 ball = s.balls[i]
-                ball.move(s.delta_time)
                 if s.plot_coords:
                     s.coords[i].append(deepcopy(ball.pos))
+                ball.move(s.delta_time)
             t += s.delta_time
 
         if s.plot_coords:
@@ -68,7 +68,9 @@ class Engine:
             plane = s.planes[i]
             momentum = 0
             for ball in s.balls:
-                if ball.collides(plane):
+                d = np.dot(ball.pos, plane.norm) - np.dot(plane.pos, plane.norm) - ball.radius
+                if d < 0: # ball collides
+                    ball.pos -= plane.norm * d
                     momentum += abs(np.dot(ball.velocity, plane.norm))
                     ball.velocity = rand_vec() * np.linalg.norm(ball.velocity)
                     if np.dot(ball.velocity, plane.norm) < 0:
