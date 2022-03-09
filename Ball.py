@@ -19,11 +19,11 @@ class Ball:
         s.traectory.append(deepcopy(s.pos))
 
     @staticmethod
-    def get_speeds(balls, max_ball_speed, delta_ball_speed):
+    def get_speeds(balls, max_ball_speed, delta_ball_speed, coord_idx=0):
         speed_frames = ceil(max_ball_speed / delta_ball_speed) + 1
         speeds = [0 for i in range(speed_frames)]
         for ball in balls:
-            speeds[int(round(abs(ball.velocity[0]) / delta_ball_speed))] += 1
+            speeds[int(round(abs(ball.velocity[coord_idx]) / delta_ball_speed))] += 1
 
         return [(speed_frame * delta_ball_speed, speeds[speed_frame])
                 for speed_frame in range(speed_frames)]

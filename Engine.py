@@ -47,7 +47,8 @@ class Engine:
             plot2d([plane.momentums for plane in s.planes])
 
         if s.plot_speeds:
-            plot2d([Ball.get_speeds(s.balls, s.max_ball_speed, s.delta_ball_speed)])
+            plot2d([Ball.get_speeds(s.balls, s.max_ball_speed, s.delta_ball_speed, coord_idx)
+                    for coord_idx in range(3)])
 
     def process_collision(s, ball, plane):
         d = np.dot(ball.pos, plane.norm) - np.dot(plane.pos, plane.norm) - ball.radius
