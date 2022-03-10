@@ -27,8 +27,6 @@ class Engine:
         s.balls = [Ball(s.ball_radius, np.array([0.5] * 3), rand_vec() * s.max_ball_speed) for i in range(s.balls_quantity)]
 
     def run(s):
-        frame = 0
-
         frames = ceil(s.max_time / s.delta_time)
         for frame in range(frames):
             time = frame * s.delta_time
