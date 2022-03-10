@@ -1,6 +1,7 @@
 import numpy as np
 from copy import deepcopy
 from math import *
+from time import process_time
 
 from Plane import Plane
 from Ball import Ball
@@ -27,6 +28,8 @@ class Engine:
         s.balls = [Ball(s.ball_radius, np.array([0.5] * 3), rand_vec() * s.max_ball_speed) for i in range(s.balls_quantity)]
 
     def run(s):
+        start_time = process_time()
+
         frames = ceil(s.max_time / s.delta_time)
         for frame in range(frames):
             time = frame * s.delta_time
@@ -37,6 +40,8 @@ class Engine:
                 ball.move(s.delta_time)
             for plane in s.planes:
                 plane.fix_momentum(time)
+
+        print("Processed in %.3f seconds" % (process_time() - start_time))
 
         if s.plot_coords:
             plot3d([ball.traectory for ball in s.balls])
