@@ -45,7 +45,7 @@ class Engine:
 
         if s.plot_trajectories:
             plot([ball.trajectory for ball in s.balls],
-                plot_3d=True,
+                mode='3d',
                 title='Trajectories',
                 xlabel='x',
                 ylabel='y',
@@ -64,6 +64,7 @@ class Engine:
         if s.plot_speeds:
             plot([Ball.get_speeds(s.balls, s.max_ball_speed, s.delta_ball_speed, coord_idx)
                     for coord_idx in range(3)],
+                mode='hist',
                 colours=['r', 'g', 'b'],
                 labels=['x', 'y', 'z'],
                 title='Speed distribution',

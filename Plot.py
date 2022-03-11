@@ -1,10 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot(lines, plot_3d=False, colours=None, labels=None,
+def plot(lines, mode=None, colours=None, labels=None,
         title='', xlabel='', ylabel='', zlabel=''):
     fig = plt.figure()
     fig.canvas.set_window_title('doFloat')
+
+    plot_3d   = mode == '3d'
+    plot_hist = mode == 'hist'
 
     for line_idx, line in enumerate(lines):
         ax = plt.gca(projection = ('3d' if plot_3d else None))
@@ -16,15 +19,22 @@ def plot(lines, plot_3d=False, colours=None, labels=None,
         if plot_3d:
             ax.set_zlabel(zlabel)
 
-        x = [coord[0] for coord in line]
-        y = [coord[1] for coord in line]
-        z = [coord[2] for coord in line] if plot_3d else None
+        x = np.array([coord[0] for coord in line])
+        y = np.array([coord[1] for coord in line])
+        z = np.array([coord[2] for coord in line]) if plot_3d else None
 
         colour = colours[line_idx] if colours else np.random.rand(3,)
         label = labels[line_idx] if labels else ''
 
         if plot_3d:
             ax.plot(x, y, z, color=colour, label=label)
+        elif plot_hist:
+            dx2 = (x[1] - x[0]) / 2
+            xn = np.ravel(list(zip(x - dx2, x + dx2)))
+            yn = np.ravel(list(zip(y, y)))
+            xn = np.concatenate(([0], xn, [xn[-1]]))
+            yn = np.concatenate(([0], yn, [0]))
+            ax.fill(xn, yn, color=colour, label=label)
         else:
             ax.plot(x, y, color=colour, label=label)
 
