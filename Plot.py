@@ -32,7 +32,7 @@ def plot(lines, mode=None, colours=None, opacity=0.75,
             dx2 = (x[1] - x[0]) / 2
             xn = np.ravel(list(zip(x - dx2, x + dx2)))
             yn = np.ravel(list(zip(y, y)))
-            xn = np.concatenate(([0], xn, [xn[-1]]))
+            xn = np.concatenate(([xn[0]], xn, [xn[-1]]))
             yn = np.concatenate(([0], yn, [0]))
             ax.fill(xn, yn, color=colour, label=label, alpha=opacity)
         else:
