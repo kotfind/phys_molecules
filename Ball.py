@@ -7,7 +7,7 @@ class Ball:
         s.radius = radius
         s.pos = pos
         s.velocity = velocity
-        s.traectory = []
+        s.trajectory = []
 
     def reflect(s, norm):
         s.velocity = s.velocity - 2 * np.dot(s.velocity, norm) * norm
@@ -15,8 +15,8 @@ class Ball:
     def move(s, dtime):
         s.pos += s.velocity * dtime
 
-    def fix_coords(s):
-        s.traectory.append(deepcopy(s.pos))
+    def fix_trajectories(s):
+        s.trajectory.append(deepcopy(s.pos))
 
     @staticmethod
     def get_speeds(balls, max_ball_speed, delta_ball_speed, coord_idx=0):

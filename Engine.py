@@ -5,7 +5,7 @@ from time import process_time
 
 from Plane import Plane
 from Ball import Ball
-from Plot import plot3d, plot2d
+from Plot import plot
 from Random import rand_vec
 
 class Engine:
@@ -17,7 +17,7 @@ class Engine:
         s.ball_radius = 1e-10;
         s.balls_quantity = int(5e3)
         s.delta_ball_speed = 1e-3
-        s.plot_coords = 0
+        s.plot_trajectories = 0
         s.plot_momentums = 0
         s.plot_speeds = 1
 
@@ -36,22 +36,39 @@ class Engine:
             for ball in s.balls:
                 for plane in s.planes:
                     s.process_collision(ball, plane)
-                ball.fix_coords()
+                ball.fix_trajectories()
                 ball.move(s.delta_time)
             for plane in s.planes:
                 plane.fix_momentum(time)
 
         print("Processed in %.3f seconds" % (process_time() - start_time))
 
-        if s.plot_coords:
-            plot3d([ball.traectory for ball in s.balls])
+        if s.plot_trajectories:
+            plot([ball.trajectory for ball in s.balls],
+                plot_3d=True,
+                title='Trajectories',
+                xlabel='x',
+                ylabel='y',
+                zlabel='z')
 
         if s.plot_momentums:
-            plot2d([plane.momentums for plane in s.planes])
+            plot([plane.momentums for plane in s.planes],
+                colours=[(1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0), (1, 0, 1), (0, 1, 1)],
+                labels=["pos: %10s; norm: %10s" %
+                    (np.array2string(plane.pos), np.array2string(plane.norm))
+                        for plane in s.planes],
+                title='Momentum distribution',
+                xlabel='Time',
+                ylabel='Momentum')
 
         if s.plot_speeds:
-            plot2d([Ball.get_speeds(s.balls, s.max_ball_speed, s.delta_ball_speed, coord_idx)
-                    for coord_idx in range(3)])
+            plot([Ball.get_speeds(s.balls, s.max_ball_speed, s.delta_ball_speed, coord_idx)
+                    for coord_idx in range(3)],
+                colours=['r', 'g', 'b'],
+                labels=['x', 'y', 'z'],
+                title='Speed distribution',
+                xlabel='Speed',
+                ylabel='Quantity')
 
     def process_collision(s, ball, plane):
         d = np.dot(ball.pos, plane.norm) - np.dot(plane.pos, plane.norm) - ball.radius
