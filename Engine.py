@@ -43,6 +43,7 @@ class Engine:
 
         print("Processed in %.3f seconds" % (process_time() - start_time))
 
+    def plot(s):
         if s.plot_trajectories:
             plot([ball.trajectory for ball in s.balls],
                 mode='3d',
