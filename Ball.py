@@ -1,6 +1,7 @@
 import numpy as np
 from math import *
 from copy import deepcopy
+from collections import Counter
 
 class Ball:
     def __init__(s, radius, pos, velocity):
@@ -19,11 +20,9 @@ class Ball:
         s.trajectory.append(deepcopy(s.pos))
 
     @staticmethod
-    def get_speeds(balls, max_ball_speed, delta_ball_speed, coord_idx=0):
-        speed_frames = ceil(max_ball_speed / delta_ball_speed) + 1
-        speeds = [0 for i in range(speed_frames)]
-        for ball in balls:
-            speeds[int(round(abs(ball.velocity[coord_idx]) / delta_ball_speed))] += 1
-
-        return [(speed_frame * delta_ball_speed, speeds[speed_frame])
-                for speed_frame in range(speed_frames)]
+    def get_speeds(balls, max_ball_speed, speed_bins, coord_idx=0):
+        delta_speed = max_ball_speed / speed_bins
+        speeds = np.array([ball.velocity[coord_idx] for ball in balls])
+        speeds = np.digitize(speeds, bins=np.cumsum(np.full(speed_bins - 1, delta_speed)))
+        cntr = Counter(speeds)
+        return [(bin_idx * delta_speed, cntr[bin_idx]) for bin_idx in range(speed_bins)]
