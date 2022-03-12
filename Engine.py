@@ -6,14 +6,15 @@ from time import process_time
 from Plane import Plane
 from Ball import Ball
 from Plot import plot
-from Random import rand_vec
+from Random import rand_unit_vec, rand_vec
 
 class Engine:
     def __init__(s):
         # Options
         s.max_time = 3
         s.delta_time = 1e-2
-        s.max_ball_speed = 1;
+        s.min_ball_speed = 1e1;
+        s.max_ball_speed = 1e2;
         s.ball_radius = 1e-10;
         s.balls_quantity = int(5e3)
         s.speed_bins = int(1e3)
@@ -25,7 +26,7 @@ class Engine:
         s.planes = Plane.cube()
 
         # Create balls
-        s.balls = [Ball(s.ball_radius, np.array([0.5] * 3), rand_vec() * s.max_ball_speed) for i in range(s.balls_quantity)]
+        s.balls = [Ball(s.ball_radius, np.array([0.5] * 3), rand_vec(s.min_ball_speed, s.max_ball_speed)) for i in range(s.balls_quantity)]
 
     def run(s):
         start_time = process_time()
@@ -63,7 +64,7 @@ class Engine:
                 ylabel='Momentum')
 
         if s.plot_speeds:
-            plot([Ball.get_speeds(s.balls, s.max_ball_speed, s.speed_bins, coord_idx)
+            plot([Ball.get_speeds(s.balls, s.min_ball_speed, s.max_ball_speed, s.speed_bins, coord_idx)
                     for coord_idx in range(3)],
                 mode='hist',
                 colours=['r', 'g', 'b'],
@@ -77,6 +78,6 @@ class Engine:
         if d < 0:
             ball.pos -= plane.norm * d
             plane.add_momentum(abs(np.dot(ball.velocity, plane.norm)))
-            ball.velocity = rand_vec() * np.linalg.norm(ball.velocity)
+            ball.velocity = rand_unit_vec() * np.linalg.norm(ball.velocity)
             if np.dot(ball.velocity, plane.norm) < 0:
                 ball.velocity *= -1
