@@ -22,6 +22,7 @@ class Engine:
         s.plot_momentums = 0
         s.plot_speeds = 1
 
+    def build_scene(s):
         # Create planes
         s.planes = Plane.cube()
 
