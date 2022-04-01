@@ -10,7 +10,7 @@ from Random import rand_unit_vec, rand_vec
 
 class Engine:
     def __init__(s):
-        # Options
+        # Default Options
         s.max_time = 3
         s.delta_time = 1e-2
         s.min_ball_speed = 1e1;
@@ -19,7 +19,48 @@ class Engine:
         s.balls_quantity = int(5e3)
         s.speed_bins = int(3e2)
         s.plot_momentums = 0
-        s.plot_speeds = 1
+        s.plot_speeds = 0
+
+    def parse_arguments(s, argv):
+        if '-t' in argv:
+            s.max_time = float(argv[argv.index('-t') + 1])
+
+        if '-d' in argv:
+            s.delta_time = float(argv[argv.index('-t') + 1])
+
+        if '--min-ball-speed' in argv:
+            s.min_ball_speed = float(argv[argv.index('--min-ball-speed') + 1])
+
+        if '--max-ball-speed' in argv:
+            s.max_ball_speed = float(argv[argv.index('--max-ball-speed') + 1])
+
+        if '-r' in argv:
+            s.ball_radius = float(argv[argv.index('-r') + 1])
+
+        if '-n' in argv:
+            s.balls_quantity = int(argv[argv.index('-n') + 1])
+
+        if '-b' in argv:
+            s.speed_bins = int(argv[argv.index('-b') + 1])
+
+        if '-m' in argv:
+            s.plot_momentums = 1
+
+        if '-s' in argv:
+            s.plot_speeds = 1
+
+    def print_options(s):
+        print('Using current options:')
+        print('Max time:       %.5f' % s.max_time)
+        print('Delta time:     %.5f' % s.delta_time)
+        print('Min ball speed: %.5f' % s.min_ball_speed)
+        print('Max ball speed: %.5f' % s.max_ball_speed)
+        print('Ball raduius:   %.5f' % s.ball_radius)
+        print('Balls quantity: %d'   % s.balls_quantity)
+        print('Speed bins:     %d'   % s.speed_bins)
+        print('Plot momentums: %d'   % s.plot_momentums)
+        print('Plot speeds:    %d'   % s.plot_speeds)
+        print()
 
     def build_scene(s):
         # Create planes
