@@ -19,22 +19,20 @@ def plot(lines, mode=None, colours=None, opacity=0.75,
         if plot_3d:
             ax.set_zlabel(zlabel)
 
-        x = np.array([coord[0] for coord in line])
-        y = np.array([coord[1] for coord in line])
-        z = np.array([coord[2] for coord in line]) if plot_3d else None
+        if plot_hist:
+            data, bins = line
+        else:
+            x = np.array([coord[0] for coord in line])
+            y = np.array([coord[1] for coord in line])
+            z = np.array([coord[2] for coord in line]) if plot_3d else None
 
         colour = colours[line_idx] if colours else np.random.rand(3,)
         label = labels[line_idx] if labels else ''
 
-        if plot_3d:
+        if plot_hist:
+            ax.hist(data, bins, color=colour, label=label, alpha=opacity)
+        elif plot_3d:
             ax.plot(x, y, z, color=colour, label=label, alpha=opacity)
-        elif plot_hist:
-            dx2 = (x[1] - x[0]) / 2
-            xn = np.ravel(list(zip(x - dx2, x + dx2)))
-            yn = np.ravel(list(zip(y, y)))
-            xn = np.concatenate(([xn[0]], xn, [xn[-1]]))
-            yn = np.concatenate(([0], yn, [0]))
-            ax.fill(xn, yn, color=colour, label=label, alpha=opacity)
         else:
             ax.plot(x, y, color=colour, label=label, alpha=opacity)
 

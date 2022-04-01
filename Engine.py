@@ -17,7 +17,7 @@ class Engine:
         s.max_ball_speed = 1e2;
         s.ball_radius = 1e-10;
         s.balls_quantity = int(5e3)
-        s.speed_bins = int(1e3)
+        s.speed_bins = int(3e2)
         s.plot_momentums = 0
         s.plot_speeds = 1
 
@@ -55,8 +55,9 @@ class Engine:
                 ylabel='Momentum')
 
         if s.plot_speeds:
-            plot([Ball.get_speeds(s.balls, s.min_ball_speed, s.max_ball_speed, s.speed_bins, coord_idx)
-                    for coord_idx in range(3)],
+            plot([([abs(ball.velocity[coord_idx])
+                    for ball in s.balls], s.speed_bins)
+                        for coord_idx in range(3)],
                 mode='hist',
                 colours=['r', 'g', 'b'],
                 labels=['x', 'y', 'z'],

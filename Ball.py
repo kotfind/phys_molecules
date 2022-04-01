@@ -14,11 +14,3 @@ class Ball:
 
     def move(s, dtime):
         s.pos += s.velocity * dtime
-
-    @staticmethod
-    def get_speeds(balls, min_ball_speed, max_ball_speed, speed_bins, coord_idx=0):
-        delta_speed = (max_ball_speed - min_ball_speed) / speed_bins
-        speeds = np.array([abs(ball.velocity[coord_idx] - min_ball_speed) for ball in balls])
-        speeds = np.digitize(speeds, bins=np.cumsum(np.full(speed_bins - 1, delta_speed)))
-        cntr = Counter(speeds)
-        return [(bin_idx * delta_speed + min_ball_speed, cntr[bin_idx]) for bin_idx in range(speed_bins)]
