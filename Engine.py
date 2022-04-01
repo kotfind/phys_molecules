@@ -26,7 +26,7 @@ class Engine:
             s.max_time = float(argv[argv.index('-t') + 1])
 
         if '-d' in argv:
-            s.delta_time = float(argv[argv.index('-t') + 1])
+            s.delta_time = float(argv[argv.index('-d') + 1])
 
         if '--min-ball-speed' in argv:
             s.min_ball_speed = float(argv[argv.index('--min-ball-speed') + 1])
