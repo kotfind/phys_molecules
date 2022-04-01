@@ -18,7 +18,6 @@ class Engine:
         s.ball_radius = 1e-10;
         s.balls_quantity = int(5e3)
         s.speed_bins = int(1e3)
-        s.plot_trajectories = 0
         s.plot_momentums = 0
         s.plot_speeds = 1
 
@@ -38,7 +37,6 @@ class Engine:
             for ball in s.balls:
                 for plane in s.planes:
                     s.process_collision(ball, plane)
-                ball.fix_trajectories()
                 ball.move(s.delta_time)
             for plane in s.planes:
                 plane.fix_momentum(time)
@@ -46,14 +44,6 @@ class Engine:
         print("Processed in %.3f seconds" % (process_time() - start_time))
 
     def plot(s):
-        if s.plot_trajectories:
-            plot([ball.trajectory for ball in s.balls],
-                mode='3d',
-                title='Trajectories',
-                xlabel='x',
-                ylabel='y',
-                zlabel='z')
-
         if s.plot_momentums:
             plot([plane.momentums for plane in s.planes],
                 colours=[(1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0), (1, 0, 1), (0, 1, 1)],
