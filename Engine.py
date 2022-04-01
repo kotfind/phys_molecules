@@ -2,6 +2,7 @@ import numpy as np
 from copy import deepcopy
 from math import *
 from time import process_time
+import multiprocessing as mp
 
 from Plane import Plane
 from Ball import Ball
@@ -18,8 +19,8 @@ class Engine:
         s.ball_radius = 1e-10;
         s.balls_quantity = int(5e3)
         s.speed_bins = int(1e3)
-        s.plot_trajectories = 0
-        s.plot_momentums = 0
+        s.plot_trajectories = 1
+        s.plot_momentums = 1
         s.plot_speeds = 1
 
     def build_scene(s):
@@ -32,18 +33,40 @@ class Engine:
     def run(s):
         start_time = process_time()
 
+        cpus = mp.cpu_count()
+        range_len = s.balls_quantity // cpus
+        ball_ranges = [s.balls[range_len * i:range_len * (i + 1)] for i in range(cpus - 1)] + [s.balls[(cpus - 1) * range_len:]]
+
+        pool = mp.Pool(cpus)
+        ball_ranges = pool.map(s.process_balls_range, ball_ranges)
+        pool.close()
+
+        s.balls = [ball for ball_range in ball_ranges for ball in ball_range]
+
+        print("Processed in %.3f seconds" % (process_time() - start_time))
+
+    def process_balls_range(s, balls):
         frames = ceil(s.max_time / s.delta_time)
         for frame in range(frames):
             time = frame * s.delta_time
-            for ball in s.balls:
+            for ball in balls:
                 for plane in s.planes:
-                    s.process_collision(ball, plane)
+                    Engine.process_collision(ball, plane)
                 ball.fix_trajectories()
                 ball.move(s.delta_time)
             for plane in s.planes:
                 plane.fix_momentum(time)
+        return balls
 
-        print("Processed in %.3f seconds" % (process_time() - start_time))
+    @staticmethod
+    def process_collision(ball, plane):
+        d = np.dot(ball.pos, plane.norm) - np.dot(plane.pos, plane.norm) - ball.radius
+        if d < 0:
+            ball.pos -= plane.norm * d
+            plane.add_momentum(abs(np.dot(ball.velocity, plane.norm)))
+            ball.velocity = rand_unit_vec() * np.linalg.norm(ball.velocity)
+            if np.dot(ball.velocity, plane.norm) < 0:
+                ball.velocity *= -1
 
     def plot(s):
         if s.plot_trajectories:
@@ -73,12 +96,3 @@ class Engine:
                 title='Speed distribution',
                 xlabel='Speed',
                 ylabel='Quantity')
-
-    def process_collision(s, ball, plane):
-        d = np.dot(ball.pos, plane.norm) - np.dot(plane.pos, plane.norm) - ball.radius
-        if d < 0:
-            ball.pos -= plane.norm * d
-            plane.add_momentum(abs(np.dot(ball.velocity, plane.norm)))
-            ball.velocity = rand_unit_vec() * np.linalg.norm(ball.velocity)
-            if np.dot(ball.velocity, plane.norm) < 0:
-                ball.velocity *= -1
