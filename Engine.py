@@ -1,7 +1,7 @@
 import numpy as np
 from copy import deepcopy
 from math import *
-from time import process_time
+from time import process_time, asctime, time
 
 from Plane import Plane
 from Ball import Ball
@@ -20,6 +20,7 @@ class Engine:
         s.speed_bins = int(3e2)
         s.plot_momentums = 0
         s.plot_speeds = 0
+        s.delta_notification_time = 30
 
     def parse_arguments(s, argv):
         if '-t' in argv:
@@ -49,6 +50,9 @@ class Engine:
         if '-s' in argv:
             s.plot_speeds = 1
 
+        if '--delta-notification-time' in argv:
+            s.delta_notification_time = int(argv[argv.index('--delta-notification-time') + 1])
+
     def print_options(s):
         print('Using current options:')
         print('Max time:       %.5f' % s.max_time)
@@ -60,6 +64,7 @@ class Engine:
         print('Speed bins:     %d'   % s.speed_bins)
         print('Plot momentums: %d'   % s.plot_momentums)
         print('Plot speeds:    %d'   % s.plot_speeds)
+        print('Delta notification time: %d' % s.delta_notification_time)
         print()
 
     def build_scene(s):
@@ -70,19 +75,25 @@ class Engine:
         s.balls = [Ball(s.ball_radius, np.array([0.5] * 3), rand_vec(s.min_ball_speed, s.max_ball_speed)) for i in range(s.balls_quantity)]
 
     def run(s):
-        start_time = process_time()
+        start_process_time = process_time()
+        start_time = time()
+        last_notification_time = 0
 
         frames = ceil(s.max_time / s.delta_time)
         for frame in range(frames):
-            time = frame * s.delta_time
             for ball in s.balls:
                 for plane in s.planes:
                     s.process_collision(ball, plane)
                 ball.move(s.delta_time)
-            for plane in s.planes:
-                plane.fix_momentum(time)
 
-        print("Processed in %.3f seconds" % (process_time() - start_time))
+            for plane in s.planes:
+                plane.fix_momentum(frame * s.delta_time)
+
+            if last_notification_time + s.delta_notification_time <= time() - start_time:
+                last_notification_time = time() - start_time
+                print('[%s] %.2f%s done in %d seconds' % (asctime(), frame / frames * 100, '%', process_time() - start_process_time))
+
+        print('Processed in %.3f seconds' % (process_time() - start_process_time))
 
     def plot(s):
         if s.plot_momentums:
